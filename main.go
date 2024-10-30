@@ -93,9 +93,9 @@ go.sum
 *workspace*
 `
 
-	gitIgnorePath := filepath.Join(".", ".golangci.yml")
+	gitIgnorePath := filepath.Join(".", ".gitignore")
 	if err := os.WriteFile(gitIgnorePath, []byte(gitIgnore), 0644); err != nil {
-		fmt.Printf("Ошибка при создании файла .golangci.yml: %v\n", err)
+		fmt.Printf("Ошибка при создании файла .gitignore: %v\n", err)
 		return
 	}
 }
