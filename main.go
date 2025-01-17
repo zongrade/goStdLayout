@@ -30,13 +30,13 @@ func main() {
 linters:
   enable-all: true  # Включает все линтеры
   disable:
-    - gomnd
-    - forbidigo
-    - exhaustruct
-    - mnd
-    - godox
-    - exhaustivestruct
-    - depguard
+    - gomnd # вроде то же что и "mnd"
+    - forbidigo # что-то сложное
+    - exhaustruct # все поля должны быть проинициализированны
+    - mnd # Детектит все числа, которые не const
+    #- godox
+    - exhaustivestruct # вроде то же что и "exhaustruct"
+    - depguard # Душка с импортами
 run:
   timeout: 20m        # Устанавливает таймаут для выполнения линтинга
 issues:
@@ -69,8 +69,10 @@ linters-settings:
       - r *http.Request
       - db *sql.DB
       - wg *sync.WaitGroup
-  cyclop:
-    package-average: 0.1
+      - mu *sync.Mutex
+      - ok bool
+  #cyclop:
+  # package-average: 0.1
   gocritic: # вроде чекает паттерны
     enable-all: true
   gocyclo:
