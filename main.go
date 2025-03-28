@@ -27,8 +27,9 @@ func main() {
 
 	// Создание файла .golangci.yml с содержимым
 	ymlContent := `
+version: "2"
 linters:
-  enable-all: true  # Включает все линтеры
+  default: all
   disable:
     - gomnd # вроде то же что и "mnd"
     - forbidigo # что-то сложное
@@ -37,46 +38,65 @@ linters:
     #- godox
     - exhaustivestruct # вроде то же что и "exhaustruct"
     - depguard # Душка с импортами
+  settings:
+    govet:
+      enable-all: true
+    staticcheck:
+      checks: ["all"]
+    gosec:
+      excludes:
+        - G404 # Отключение правила G404 Insecure random number source (rand)
+      concurrency: 6
+    wsl:
+      allow-cuddle-declarations: true
+    varnamelen:
+      max-distance: 5
+      min-name-length: 3
+      check-receiver: false
+      check-return: false
+      check-type-param: false
+      ignore-type-assert-ok: false
+      ignore-map-index-ok: false
+      ignore-chan-recv-ok: false
+      ignore-decls:
+        - w http.ResponseWriter
+        - r *http.Request
+        - db *sql.DB
+        - wg *sync.WaitGroup
+        - mu *sync.Mutex
+        - ok bool
+    #cyclop:
+    # package-average: 0.1
+    gocritic: # вроде чекает паттерны
+      enable-all: true
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+        - experimental
+        - opinionated
+    gocyclo:
+      min-complexity: 10
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    iface:
+      enable:
+        - identical
+        - unused
+        - opaque
+    importas:
+      no-unaliased: true
+    tagalign:
+      align: true
+      sort: true
+      strict: false
 run:
-  timeout: 20m        # Устанавливает таймаут для выполнения линтинга
+  timeout: 20m # Устанавливает таймаут для выполнения линтинга
 issues:
-  max-issues-per-linter: 0  # Неограниченное количество проблем на один линтер
-  max-same-issues: 0        # Неограниченное количество одинаковых проблем
-  exclude-use-default: false
-linters-settings:
-  govet:
-    enable-all: true
-  staticcheck:
-    checks: ["all"]
-  gosimple:
-    checks: ["all"]
-  gosec:
-    excludes:
-      - G404  # Отключение правила G404 Insecure random number source (rand)
-  wsl:
-    allow-cuddle-declarations: true
-  varnamelen:
-    max-distance: 5
-    min-name-length: 3
-    check-receiver: false
-    check-return: false
-    check-type-param: false
-    ignore-type-assert-ok: false
-    ignore-map-index-ok: false
-    ignore-chan-recv-ok: false
-    ignore-decls:
-      - w http.ResponseWriter
-      - r *http.Request
-      - db *sql.DB
-      - wg *sync.WaitGroup
-      - mu *sync.Mutex
-      - ok bool
-  #cyclop:
-  # package-average: 0.1
-  gocritic: # вроде чекает паттерны
-    enable-all: true
-  gocyclo:
-    min-complexity: 10
+  fix: true
+  max-issues-per-linter: 0 # Неограниченное количество проблем на один линтер
+  max-same-issues: 0 # Неограниченное количество одинаковых проблем
 `
 	ymlPath := filepath.Join(".", ".golangci.yml")
 	if err := os.WriteFile(ymlPath, []byte(ymlContent), 0644); err != nil {
